@@ -16,21 +16,19 @@ pub fn count_increases(smoothed: bool) -> i32 {
 }
 
 fn count_increases_smooth(lines: Vec<i32>) -> i32 {
-    let mut previous_sum: i32 = 0;
-    let mut current_sum: i32 = 0;
     let mut increases: i32 = 0;
     let mut last_depth: i32 = 0;
     let mut second_last_depth: i32 = 0;
     let mut third_last_depth: i32 = 0;
 
-    for (index, &depth) in lines.iter().enumerate() {
-        if index > 2 {
-            current_sum = depth + last_depth + second_last_depth;
-            previous_sum = last_depth + second_last_depth + third_last_depth;
-        }
-        if previous_sum != 0 && current_sum > previous_sum {
+    for depth in lines {
+        let current_sum = depth + last_depth + second_last_depth;
+        let previous_sum = last_depth + second_last_depth + third_last_depth;
+
+        if third_last_depth != 0 && current_sum > previous_sum {
             increases += 1
         }
+
         third_last_depth = second_last_depth;
         second_last_depth = last_depth;
         last_depth = depth;

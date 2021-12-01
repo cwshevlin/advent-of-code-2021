@@ -17,57 +17,28 @@ pub fn count_increases(smoothed: bool) -> i32 {
 
 fn count_increases_smooth(lines: io::Lines<io::BufReader<File>>) -> i32 {
     let mut previous_sum: i32 = 0;
+    let mut current_sum: i32 = 0;
     let mut increases: i32 = 0;
-    let mut a: i32 = 0;
-    let mut b: i32 = 0;
-    let mut c: i32 = 0;
-    let mut d: i32 = 0;
+    let mut last_depth: i32 = 0;
+    let mut second_last_depth: i32 = 0;
+    let mut third_last_depth: i32 = 0;
+
 
     for (index, line) in lines.enumerate() {
         if let Ok(depth) = line {
-            let mut sum = 0;
             let new_depth = depth.parse::<i32>().ok();
             match new_depth {
                 Some(new_depth_unwrapped) => {
-                    if index < 3 {
-                        a += new_depth_unwrapped
-                    } else if index % 4 == 3 {
-                        b += new_depth_unwrapped;
-                        c += new_depth_unwrapped;
-                        d += new_depth_unwrapped;
-
-                        sum = a;
-                        println!("A: {}", sum);
-                        a = 0;
-                    } else if index % 4 == 0 {
-                        a += new_depth_unwrapped;
-                        c += new_depth_unwrapped;
-                        d += new_depth_unwrapped;
-
-                        sum = b; 
-                        println!("B: {}", sum);
-                        b = 0;
-                    } else if index % 4 == 1 {
-                        a += new_depth_unwrapped;
-                        b += new_depth_unwrapped;
-                        d += new_depth_unwrapped;
-
-                        sum = c; 
-                        println!("C: {}", sum);
-                        c = 0;
-                    } else if index % 4 == 2 {
-                        a += new_depth_unwrapped;
-                        b += new_depth_unwrapped;
-                        c += new_depth_unwrapped;
-
-                        sum = d; 
-                        println!("D: {}", sum);
-                        d = 0;
+                    if index > 3 {
+                        current_sum = new_depth_unwrapped + last_depth + second_last_depth;
+                        previous_sum = last_depth + second_last_depth + third_last_depth;
                     }
-                    if previous_sum != 0 && sum > previous_sum {
+                    if previous_sum != 0 && current_sum > previous_sum {
                         increases += 1
                     }
-                    previous_sum = sum;
+                    third_last_depth = second_last_depth;
+                    second_last_depth = last_depth;
+                    last_depth = new_depth_unwrapped;
                 }
                 None => {
                     break

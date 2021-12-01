@@ -15,7 +15,7 @@ pub fn count_increases(smoothed: bool) -> i32 {
     return -1;
 }
 
-fn count_increases_smooth(lines: io::Lines<io::BufReader<File>>) -> i32 {
+fn count_increases_smooth(lines: Vec<i32>) -> i32 {
     let mut previous_sum: i32 = 0;
     let mut current_sum: i32 = 0;
     let mut increases: i32 = 0;
@@ -23,66 +23,41 @@ fn count_increases_smooth(lines: io::Lines<io::BufReader<File>>) -> i32 {
     let mut second_last_depth: i32 = 0;
     let mut third_last_depth: i32 = 0;
 
-
-    for (index, line) in lines.enumerate() {
-        if let Ok(depth) = line {
-            let new_depth = depth.parse::<i32>().ok();
-            match new_depth {
-                Some(new_depth_unwrapped) => {
-                    if index > 3 {
-                        current_sum = new_depth_unwrapped + last_depth + second_last_depth;
-                        previous_sum = last_depth + second_last_depth + third_last_depth;
-                    }
-                    if previous_sum != 0 && current_sum > previous_sum {
-                        increases += 1
-                    }
-                    third_last_depth = second_last_depth;
-                    second_last_depth = last_depth;
-                    last_depth = new_depth_unwrapped;
-                }
-                None => {
-                    break
-                }
-            }
+    for (index, &depth) in lines.iter().enumerate() {
+        if index > 2 {
+            current_sum = depth + last_depth + second_last_depth;
+            previous_sum = last_depth + second_last_depth + third_last_depth;
         }
+        if previous_sum != 0 && current_sum > previous_sum {
+            increases += 1
+        }
+        third_last_depth = second_last_depth;
+        second_last_depth = last_depth;
+        last_depth = depth;
     }
     return increases;
 }
 
-fn count_increases_rough(lines: io::Lines<io::BufReader<File>>) -> i32 {
+fn count_increases_rough(lines: Vec<i32>) -> i32 {
     let mut previous_depth: Option<i32> = None;
     let mut increases: i32 = 0;
-    for line in lines {
-        if let Ok(depth) = line {
-            match previous_depth {
-                Some(previous_depth_unwrapped) => {
-                    // There is a value, compare to last.
-                    let new_depth = depth.parse::<i32>().ok();
-                    match new_depth {
-                        Some(new_depth_unwrapped) => {
-                            if previous_depth_unwrapped < new_depth_unwrapped {
-                                increases += 1;
-                            }
-                            previous_depth = new_depth
-                        }
-                        None => {
-                            break
-                        }
-                    }
+    for new_depth in lines {
+        match previous_depth {
+            Some(previous_depth_unwrapped) => {
+                if previous_depth_unwrapped < new_depth {
+                    increases += 1;
                 }
-                None => {
-                    // There's not a value in previous_depth yet, assign it to this depth.
-                    previous_depth = depth.parse::<i32>().ok();
-                }
-            } 
-        }
+            }
+            None => {}
+        } 
+        previous_depth = Some(new_depth)
     }
     return increases;
 }
 
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
+fn read_lines<P>(filename: P) -> io::Result<Vec<i32>>
 where P: AsRef<Path>, {
     let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
+    Ok(io::BufReader::new(file).lines().filter_map(|depth| depth.ok().unwrap().parse::<i32>().ok()).collect())
 }
 

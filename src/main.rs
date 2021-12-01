@@ -2,5 +2,5 @@
 mod day_1;
 
 fn main() {
-    day_1::count_increases();
+    println!("{}", day_1::count_increases(true));
 }

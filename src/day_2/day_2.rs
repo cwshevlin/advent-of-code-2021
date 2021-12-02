@@ -3,6 +3,12 @@ use std::fs::File;
 use std::path::Path;
 use std::io::{self, BufRead};
 
+enum Direction {
+    Up,
+    Down, 
+    Forward
+}
+
 pub fn find_position(use_aim: bool) -> (i32, i32) {
     let filepath = Path::new("./day_2/input.txt");
     let mut horizontal = 0;
@@ -29,12 +35,6 @@ pub fn find_position(use_aim: bool) -> (i32, i32) {
     return (horizontal, vertical);
 }
 
-enum Direction {
-    Up,
-    Down, 
-    Forward
-}
-
 fn parse_movement(movement: String) -> (Direction, i32) {
     let pair: Vec<&str> = movement.split(' ').collect();
     let distance = parse_number(pair.get(1).unwrap());
@@ -49,7 +49,6 @@ fn parse_movement(movement: String) -> (Direction, i32) {
 fn parse_number(number: &str) -> i32 {
     return number.parse::<i32>().ok().unwrap();
 }
-
 
 fn read_lines<P>(filename: P) -> io::Result<Vec<String>>
 where P: AsRef<Path>, {

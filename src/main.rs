@@ -1,6 +1,6 @@
-#[path = "./day_1/day_1.rs"]
-mod day_1;
+#[path = "./day_2/day_2.rs"]
+mod day_2;
 
 fn main() {
-    println!("{}", day_1::count_increases(true));
+    println!("{:?}", day_2::find_position(true));
 }

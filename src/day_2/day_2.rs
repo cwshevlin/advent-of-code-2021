@@ -19,8 +19,8 @@ pub fn find_position(use_aim: bool) -> (i32, i32) {
         for movement in movements {
             let direction_tuple = parse_movement(movement);
             match direction_tuple.0 {
-                Direction::Up => if use_aim {aim -= direction_tuple.1} else { vertical -= direction_tuple.1 },
-                Direction::Down => if use_aim {aim += direction_tuple.1} else {vertical += direction_tuple.1},
+                Direction::Up => if use_aim { aim -= direction_tuple.1 } else { vertical -= direction_tuple.1 },
+                Direction::Down => if use_aim { aim += direction_tuple.1 } else { vertical += direction_tuple.1 },
                 Direction::Forward => {
                     if use_aim {
                         horizontal += direction_tuple.1;
